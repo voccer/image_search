@@ -31,13 +31,15 @@
 
         }
 
-        a:link,a:visited {
+        a:link,
+        a:visited {
             color: (internal value);
             text-decoration: underline;
             cursor: all-scroll;
         }
 
-        a:link:active,a:visited:active {
+        a:link:active,
+        a:visited:active {
             color: (internal value);
         }
     </style>
@@ -48,7 +50,6 @@
     </script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
     </script>
-    <!-- <script src='static/js/custom.js'> </script> -->
     <script>
         $(document).ready(function () {
             localStorage.clear()
@@ -88,8 +89,7 @@
 
             $("#image_input").change(function () {
                 readURL(this);
-                $("#btn-sub").show("slow");
-                $(".tab").show("slow");
+                $('#option').show('slow');
             });
         });
     </script>
@@ -100,7 +100,7 @@
         Ứng dụng tìm kiếm quần áo
     </h1>
     <div class="container">
-        <form class="md-form" action="/" method="POST" enctype="multipart/form-data">
+        <form class="md-form" id='my-form' action="/" method="POST" enctype="multipart/form-data">
 
             <div class="row justify-content-center">
                 <div class="form-group offset-md-2">
@@ -108,66 +108,69 @@
                     <input type="file" class="form-control-file" id="image_input" name='img'>
                 </div>
             </div>
-            {%if images:%}
             <div class="row justify-content-center">
                 <div class="col-md-4">
-                    <img class="card-img-top" id=show_input width="400" height="400"
-                        src="static/file_client/{{images[-1]}}">
+                    <img class="card-img-top" id=show_input width="400" height="400" src="static/images/templates.png">
                 </div>
             </div>
             </br>
-            <div class="row justify-content-center">
-                <p class="tab" style="margin-top: 5px;"><strong>Số ảnh&nbsp;&nbsp;</strong></p>
-                <input type="number" min='1' name="k" class="tab" value="{{k}}" style=" width: 50px;border-radius: 5%;">
-                <p class='tab' style="display: inline;">&nbsp;&nbsp;</p>
-                <input type="submit" class="btn btn-success" value="Tìm kiếm" id="btn-sub" style="display: inline">
+
+            <div class="row justify-content-center" id='option' style="display: none;">
+                <p style="margin-top: 5px;"><strong>Số ảnh&nbsp;&nbsp;</strong></p>
+                <input type="number" id='k' min='1' name="k" value="3" style="width: 50px;border-radius: 5%;">
+                <p>&nbsp;&nbsp;</p>
+                <input type="submit" class="btn btn-success" value="Tìm kiếm">
             </div>
-            <h1 style="color:green;text-align:center;">
+            <h1 id='result' style="color:green;text-align:center; display: none;">
                 Kết quả
             </h1>
 
-            {%else:%}
-            <div class="row justify-content-center">
-                <div class="col-md-4">
-                    <img class="card-img-top" id="show_input" src="static/images/templates.png">
-                </div>
-            </div>
-            </br>
-            <div class="row justify-content-center">
-                <p class="tab" style="display: none; margin-top: 5px;"><strong>Số ảnh &nbsp;&nbsp;</strong></p>
-                <input type="number" name="k" min='1' class="tab" value="{{k}}"
-                    style="display: none; width: 50px;border-radius: 5%;">
-                <p class="tab" style="display: none;">&nbsp;&nbsp;</p>
-                <input type="submit" class="btn btn-success" value="Tìm kiếm" id="btn-sub" style="display: none">
-            </div>
-
-
-            {%endif%}
         </form>
 
-        {%if images:%}
 
-        <div class="card-group" style="height: 550px;">
-            <div class="row">
-                {%for each_image in images[:-1]:%}
-                <div class="card col-md-4">
-                    <img class="card-img-top" src="static/dataset/images/{{each_image['image_name']}}">
-
-                    <div class="card-body">
-                        <h3 class="card-title">Giá : {{each_image['price']}} vnd</h3>
-                        <p class="card-text">{{each_image['title']}}</p>
-                        <p class="card-text">Các cỡ áo : S | M | L |
-                            XL
-                        </p>
-                        Xem thêm chi tiết <a target="_brank" href="{{each_image['url']}}">tại đây</a>
-                    </div>
-                </div>
-                {%endfor%}
-
-            </div>
+        <div class="card-group" id='group-result' style="height: 550px; display: none;" >
+            
         </div>
-        {%endif%}
     </div>
+
+    <script>
+        $('#my-form').submit(function (e) {
+            e.preventDefault();
+            let k = $('#k').val();
+            var formData = new FormData();
+            formData.append('img', $('#image_input')[0].files[0]);
+            formData.append('k', k)
+            $.ajax({
+                type: "POST",
+                url: '/predict',
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (msg) {
+                    image_info = msg['image_info'];
+                    len = image_info.length;
+                    image_client = image_info[len-1];
+                    $('#group-result').show();
+
+                    for(var i = 0; i < 3; i++){
+                        let html = '';
+                        html += '<div class="row"> \n';
+                        html += '<div class="card col-md-4">\n';
+                        html += '<img class="card-img-top" src="#">\n';
+                        html += '<div class="card-body">\n';
+                        html += '<h3 class="card-title">Giá : 100 vnd</h3>\n';
+                        html += '<p class="card-text">Title</p>\n';
+                        html += '<p class="card-text">Các cỡ áo : S | M | L | XL</p>\n';
+                        html += 'Xem thêm chi tiết <a target="_brank" href="#">tại đây</a>\n';
+                        html += '</div>\n';
+                        html += ' </div>\n';
+                        html += '</div>\n';
+                        $('#group-result').append(html);
+                    }
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>

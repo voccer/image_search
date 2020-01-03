@@ -12,7 +12,7 @@ from PIL import Image
 from keras.models import load_model
 from flask import Flask, request, json, redirect, url_for
 from werkzeug.utils import secure_filename
-from flask import render_template
+from flask import render_template, jsonify
 from tensorflow.keras import backend as K
 import tensorflow as tf
 from tensorflow.keras.models import model_from_json
@@ -97,35 +97,67 @@ def search_annoy(features, k):
     filtered_indexes = annoy_model.get_nns_by_vector(features, k, search_k=1000)
     return filtered_indexes
 
-@app.route("/", methods=['POST', 'GET'])
-def index():
-    if(request.method == 'GET'):
-        return render_template('index.html', images=[], k = 2)
-    else:
-        global non_image
-        if not os.path.exists("static/file_client/"):
-            os.makedirs("static/file_client/")
-        img = request.files['img']
-        if 'application' in str(img):
-            pass
-        else:
-            image = Image.open(img)
-            non_image = secure_filename(img.filename)
-            image.save('static/file_client/' + non_image) 
+# @app.route("/", methods=['POST', 'GET'])
+# def index():
+#     if(request.method == 'GET'):
+#         return render_template('index.html', images=[], k = 2)
+#     else:
+#         global non_image
+#         if not os.path.exists("static/file_client/"):
+#             os.makedirs("static/file_client/")
+#         img = request.files['img']
+#         if 'application' in str(img):
+#             pass
+#         else:
+#             image = Image.open(img)
+#             non_image = secure_filename(img.filename)
+#             image.save('static/file_client/' + non_image) 
 
-        result = predict('static/file_client/' + str(non_image))
+#         result = predict('static/file_client/' + str(non_image))
 
-        k = int(request.form['k'])
+#         k = int(request.form['k'])
         
-        top_k = search_annoy(result, k)
-        print(top_k)
+#         top_k = search_annoy(result, k)
+#         print(top_k)
 
-        image_info = []
-        for i in top_k:
-            image_info.append(index_dic[i])
+#         image_info = []
+#         for i in top_k:
+#             image_info.append(index_dic[i])
 
-        image_info.append(non_image)
-        return render_template('index.html', images = image_info, k=k)
+#         image_info.append(non_image)
+#         return render_template('index.html', images = image_info, k=k)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/predict', methods=['POST'])
+def predict_new():
+    global non_image
+    if not os.path.exists("static/file_client/"):
+        os.makedirs("static/file_client/")
+    img = request.files['img']
+    if 'application' in str(img):
+        pass
+    else:
+        image = Image.open(img)
+        non_image = secure_filename(img.filename)
+        image.save('static/file_client/' + non_image) 
+
+    result = predict('static/file_client/' + str(non_image))
+    k = int(request.form['k'])
+
+    
+    top_k = search_annoy(result, k)
+    print(top_k)
+
+    image_info = []
+    for i in top_k:
+        image_info.append(index_dic[i])
+
+    image_info.append(non_image)
+    return jsonify({'image_info': image_info, 'k': k})
+
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=6000, debug=True)
