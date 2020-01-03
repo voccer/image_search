@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        Ứng dụng truy vấn ảnh
+    </title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url(static/images/background.jpg);
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 50%;
+            padding-top: 10px;
+        }
+
+        h1 {
+            color: green;
+        }
+
+        #in-top {
+            width: 10px;
+            border-radius: 5%;
+            text-align: center;
+
+        }
+
+        a:link,a:visited {
+            color: (internal value);
+            text-decoration: underline;
+            cursor: all-scroll;
+        }
+
+        a:link:active,a:visited:active {
+            color: (internal value);
+        }
+    </style>
+    <link type="image/x-icon" href='static/images/favicon.ico' rel="shortcut icon" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+    </script>
+    <!-- <script src='static/js/custom.js'> </script> -->
+    <script>
+        $(document).ready(function () {
+            localStorage.clear()
+        });
+        $(document).ready(function () {
+            $(document).on('change', '#image_input :file', function () {
+                var input = $(this),
+                    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                input.trigger('fileselect', [label]);
+            });
+
+            $('#image_input :file').on('fileselect', function (event, label) {
+
+                var input = $(this).parents('.input-group').find(':text'),
+                    log = label;
+
+                if (input.length) {
+                    input.val(log);
+                } else {
+                    if (log) alert(log);
+                }
+
+            });
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $('#show_input').attr('src', e.target.result);
+                        $('#show_input').attr('width', 400);
+                        $('#show_input').attr('height', 400);
+                    }
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#image_input").change(function () {
+                readURL(this);
+                $("#btn-sub").show("slow");
+                $(".tab").show("slow");
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <h1 style="color:green;text-align:center;">
+        Ứng dụng tìm kiếm quần áo
+    </h1>
+    <div class="container">
+        <form class="md-form" action="/" method="POST" enctype="multipart/form-data">
+
+            <div class="row justify-content-center">
+                <div class="form-group offset-md-2">
+                    <label for="image_input">Mời bạn nhập ảnh</label>
+                    <input type="file" class="form-control-file" id="image_input" name='img'>
+                </div>
+            </div>
+            {%if images:%}
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <img class="card-img-top" id=show_input width="400" height="400"
+                        src="static/file_client/{{images[-1]}}">
+                </div>
+            </div>
+            </br>
+            <div class="row justify-content-center">
+                <p class="tab" style="margin-top: 5px;"><strong>Số ảnh&nbsp;&nbsp;</strong></p>
+                <input type="number" min='1' name="k" class="tab" value="{{k}}" style=" width: 50px;border-radius: 5%;">
+                <p class='tab' style="display: inline;">&nbsp;&nbsp;</p>
+                <input type="submit" class="btn btn-success" value="Tìm kiếm" id="btn-sub" style="display: inline">
+            </div>
+            <h1 style="color:green;text-align:center;">
+                Kết quả
+            </h1>
+
+            {%else:%}
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <img class="card-img-top" id="show_input" src="static/images/templates.png">
+                </div>
+            </div>
+            </br>
+            <div class="row justify-content-center">
+                <p class="tab" style="display: none; margin-top: 5px;"><strong>Số ảnh &nbsp;&nbsp;</strong></p>
+                <input type="number" name="k" min='1' class="tab" value="{{k}}"
+                    style="display: none; width: 50px;border-radius: 5%;">
+                <p class="tab" style="display: none;">&nbsp;&nbsp;</p>
+                <input type="submit" class="btn btn-success" value="Tìm kiếm" id="btn-sub" style="display: none">
+            </div>
+
+
+            {%endif%}
+        </form>
+
+        {%if images:%}
+
+        <div class="card-group" style="height: 550px;">
+            <div class="row">
+                {%for each_image in images[:-1]:%}
+                <div class="card col-md-4">
+                    <img class="card-img-top" src="static/dataset/images/{{each_image['image_name']}}">
+
+                    <div class="card-body">
+                        <h3 class="card-title">Giá : {{each_image['price']}} vnd</h3>
+                        <p class="card-text">{{each_image['title']}}</p>
+                        <p class="card-text">Các cỡ áo : S | M | L |
+                            XL
+                        </p>
+                        Xem thêm chi tiết <a target="_brank" href="{{each_image['url']}}">tại đây</a>
+                    </div>
+                </div>
+                {%endfor%}
+
+            </div>
+        </div>
+        {%endif%}
+    </div>
+</body>
+
+</html>
