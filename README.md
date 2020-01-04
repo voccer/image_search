@@ -23,6 +23,6 @@
 ## Công nghệ
 <strong>Ứng dụng sử dụng 2 version:</strong>
 <ul>
-    <li>Sử dụng template jinja2 của python - checkout jinja2 </li>
-    <li>Sử dụng ajax xử lý không load lại trang - checkout ajax</li>
+    <li>Sử dụng template jinja2 của python - <code>git checkout jinja2</code>  </li>
+    <li>Sử dụng ajax xử lý không load lại trang - <code>git checkout ajax</code> </li>
 </ul>
