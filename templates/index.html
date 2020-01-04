@@ -110,7 +110,7 @@
             </div>
             <div class="row justify-content-center">
                 <div class="col-md-4">
-                    <img class="card-img-top" id=show_input width="400" height="400" src="static/images/templates.png">
+                    <img class="card-img-top" id=show_input width="400px" height="auto" src="static/images/templates.png">
                 </div>
             </div>
             </br>
@@ -122,11 +122,13 @@
                 <input type="submit" class="btn btn-success" value="Tìm kiếm">
             </div>
             <h1 id='result' style="color:green;text-align:center; display: none;">
+                <br>
                 Kết quả
             </h1>
 
         </form>
 
+        <br>
 
         <div class="card-group" id='group-result' style="height: 550px; display: none;" >
             
@@ -150,20 +152,25 @@
                     image_info = msg['image_info'];
                     len = image_info.length;
                     image_client = image_info[len-1];
+                    $('#result').show();
                     $('#group-result').show();
+
                     let html = '';
                     html += '<div class="row"> ';
                     
                     for(var i = 0; i < k; i++){
-                        image_path = '/static/dataset/images/' + image_info[i];
-                        price = 
+                        image_path = '/static/dataset/images/' + image_info[i]['image_name'];
+                        price = image_info[i]['price'];
+                        title = image_info[i]['title'];
+                        url = image_info[i]['url'];
+
                         html += '<div class="card col-md-4">';
                         html = html +  '<img class="card-img-top" src="'+ image_path + '">';
                         html += '<div class="card-body">';
-                        html += '<h3 class="card-title">Giá :  vnd</h3>';
-                        html += '<p class="card-text">Title</p>';
+                        html += '<h3 class="card-title">Giá :'  + price + 'vnd</h3>';
+                        html += '<p class="card-text">'+ title+ '</p>';
                         html += '<p class="card-text">Các cỡ áo : S | M | L | XL</p>';
-                        html += 'Xem thêm chi tiết <a target="_brank" href="#">tại đây</a>';
+                        html += 'Xem thêm chi tiết <a target="_brank" href="'+ url + '">tại đây</a>';
                         html += '</div>';
                         html += '</div>';
                     }
