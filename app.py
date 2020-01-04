@@ -28,7 +28,6 @@ model_path = 'model/ranknet_mix1'
 with open("model/Ranknet.def", "r") as f:
   model_json = f.read()
   model = model_from_json(model_json)
-# print("Loading model {} with weights {}".format(model_name, weights_filename))
 
 for i in os.listdir(model_path):
     if i.endswith('.h5'):
@@ -96,36 +95,6 @@ def predict(image_name):
 def search_annoy(features, k):
     filtered_indexes = annoy_model.get_nns_by_vector(features, k, search_k=1000)
     return filtered_indexes
-
-# @app.route("/", methods=['POST', 'GET'])
-# def index():
-#     if(request.method == 'GET'):
-#         return render_template('index.html', images=[], k = 2)
-#     else:
-#         global non_image
-#         if not os.path.exists("static/file_client/"):
-#             os.makedirs("static/file_client/")
-#         img = request.files['img']
-#         if 'application' in str(img):
-#             pass
-#         else:
-#             image = Image.open(img)
-#             non_image = secure_filename(img.filename)
-#             image.save('static/file_client/' + non_image) 
-
-#         result = predict('static/file_client/' + str(non_image))
-
-#         k = int(request.form['k'])
-        
-#         top_k = search_annoy(result, k)
-#         print(top_k)
-
-#         image_info = []
-#         for i in top_k:
-#             image_info.append(index_dic[i])
-
-#         image_info.append(non_image)
-#         return render_template('index.html', images = image_info, k=k)
 
 @app.route('/')
 def index():
