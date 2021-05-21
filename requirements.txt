@@ -4,6 +4,6 @@ opencv_python==4.1.1.26
 Werkzeug==0.15.4
 numpy==1.16.4
 imutils==0.5.3
-tensorflow==1.14.0
+tensorflow==2.5.0
 Pillow==6.2.1
 annoy==1.16.2
