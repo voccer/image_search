@@ -5,5 +5,5 @@ Werkzeug==0.15.4
 numpy==1.16.4
 imutils==0.5.3
 tensorflow==1.14.0
-Pillow==6.2.1
+Pillow==8.2.0
 annoy==1.16.2
